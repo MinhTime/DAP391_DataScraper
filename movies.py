@@ -1,5 +1,6 @@
 import time
 import re
+import os  # Thêm thư viện os để kiểm tra file tồn tại
 import pandas as pd
 
 from selenium import webdriver
@@ -7,17 +8,16 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
-
 # =========================
-# 1. DANH SÁCH 50 PHIM
+# 1. DANH SÁCH CÁC PHIM MỚI
 # =========================
 MOVIE_PAGES = {
-    "Whiplash": "https://www.imdb.com/title/tt2582802/reviews/",
+
+    # "Film Name": "Link",
 }
 
 MAX_REVIEWS_PER_MOVIE = 100
-OUTPUT_FILE = "film_reviews_dataset.csv"
-
+OUTPUT_FILE = "film_reviews_dataset.csv"  # Giữ nguyên tên file cũ của bạn
 
 # =========================
 # 2. SETUP CHROME
@@ -31,15 +31,12 @@ driver = webdriver.Chrome(
     options=options
 )
 
-
 # =========================
 # 3. LOGIN THỦ CÔNG
 # =========================
 driver.get("https://www.imdb.com/")
-
 print("Nếu cần đăng nhập IMDb thì đăng nhập thủ công trên Chrome vừa mở.")
 input("Sau khi đăng nhập xong, quay lại Terminal và nhấn ENTER...")
-
 
 # =========================
 # 4. HÀM LẤY RATING
@@ -49,7 +46,6 @@ def extract_rating(text):
     if match:
         return int(match.group(1))
     return None
-
 
 # =========================
 # 5. HÀM CÀO REVIEW
@@ -69,8 +65,6 @@ def scrape_reviews(movie_name, url):
             '[data-testid="review-overflow"]'
         )
 
-        print(f"{movie_name}: tìm thấy {len(elements)} review elements")
-
         for element in elements:
             review_text = driver.execute_script(
                 "return arguments[0].innerText;",
@@ -79,7 +73,6 @@ def scrape_reviews(movie_name, url):
 
             if not review_text or len(review_text) < 20:
                 continue
-
             if review_text in seen_reviews:
                 continue
 
@@ -105,8 +98,6 @@ def scrape_reviews(movie_name, url):
                 "source_url": url
             })
 
-            print(f"Collected {len(reviews)}/{MAX_REVIEWS_PER_MOVIE}")
-
             if len(reviews) >= MAX_REVIEWS_PER_MOVIE:
                 break
 
@@ -124,13 +115,11 @@ def scrape_reviews(movie_name, url):
         for btn in buttons:
             try:
                 btn_text = btn.text.lower()
-
                 if "load more" in btn_text or "more" in btn_text:
                     driver.execute_script("arguments[0].click();", btn)
                     clicked = True
                     time.sleep(3)
                     break
-
             except:
                 pass
 
@@ -140,50 +129,48 @@ def scrape_reviews(movie_name, url):
 
     return reviews
 
-
 # =========================
-# 6. CHẠY SCRAPER
+# 6. CHẠY SCRAPER VÀ LƯU NỐI TIẾP
 # =========================
-all_reviews = []
-
 for movie_name, url in MOVIE_PAGES.items():
     print("=" * 50)
     print(f"Đang cào phim: {movie_name}")
 
     movie_reviews = scrape_reviews(movie_name, url)
-    all_reviews.extend(movie_reviews)
+    
+    if movie_reviews:
+        df_temp = pd.DataFrame(movie_reviews)
+        
+        # Kiểm tra xem file đã tồn tại chưa
+        file_exists = os.path.isfile(OUTPUT_FILE)
+        
+        # Cốt lõi của việc tiếp tục lưu vào file: mode='a'
+        df_temp.to_csv(
+            OUTPUT_FILE,
+            mode='a', 
+            index=False,
+            header=not file_exists,  # Chỉ in header nếu file chưa từng tồn tại
+            encoding="utf-8-sig"
+        )
 
-    # Lưu tạm sau mỗi phim để tránh mất data
-    df_temp = pd.DataFrame(all_reviews)
-    df_temp.to_csv(
-        OUTPUT_FILE,
-        index=False,
-        encoding="utf-8-sig"
-    )
-
-    print(f"{movie_name}: lấy được {len(movie_reviews)} reviews")
-    print(f"Đã lưu tạm vào {OUTPUT_FILE}")
+        print(f"{movie_name}: lấy được {len(movie_reviews)} reviews")
+        print(f"Đã LƯU NỐI TIẾP vào {OUTPUT_FILE}")
+    else:
+        print(f"{movie_name}: Không lấy được review nào.")
 
     time.sleep(5)
 
-
 # =========================
-# 7. LƯU FILE CSV CUỐI
+# 7. TỔNG KẾT FILE CSV 
 # =========================
-df = pd.DataFrame(all_reviews)
-
-df.to_csv(
-    OUTPUT_FILE,
-    index=False,
-    encoding="utf-8-sig"
-)
-
 print("=" * 50)
-print(f"HOÀN TẤT")
-print(f"Tổng số reviews: {len(df)}")
-print(f"Đã lưu file: {OUTPUT_FILE}")
-print(df.head())
+print(f"HOÀN TẤT SCRAPING CÁC PHIM MỚI")
 
+# Đọc lại toàn bộ file để báo cáo tổng số dòng hiện tại
+if os.path.isfile(OUTPUT_FILE):
+    df_final = pd.read_csv(OUTPUT_FILE)
+    print(f"Tổng số reviews có trong file hiện tại: {len(df_final)}")
+    print(f"Đã lưu tại file: {OUTPUT_FILE}")
 
 # =========================
 # 8. ĐÓNG BROWSER
