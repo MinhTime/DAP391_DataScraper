@@ -1,14 +1,14 @@
-### 🎬 Load các file về chung một folder, set up môi trường ảo venv và load các libs. Ở file movies.py, thêm các "Tên phim : Link phim trên IMDb" (chưa có trong danh sách) ở MOVIES_PAGES rồi chạy để Cào nối tiếp vào file CSV
+#### 🎬 Load các file về chung một folder, set up môi trường ảo venv và load các libs. Ở file movies.py, thêm các "Tên phim : Link phim trên IMDb" (chưa có trong danh sách) ở MOVIES_PAGES rồi chạy để Cào nối tiếp vào file CSV
 
 
-### 🎬 Chạy movies.py trên Terminal sẽ truy cập vào web IMDb, bạn cần đăng nhập sau đó quay lại Terminal và Nhấn ENTER để chạy thành công
+#### 🎬 Chạy movies.py trên Terminal sẽ truy cập vào web IMDb, bạn cần đăng nhập sau đó quay lại Terminal và Nhấn ENTER để chạy thành công
 
 
-### 🎬 Số Reviews Thu Thập Mỗi Phim: 100 Reviews
+#### 🎬 Số Reviews Thu Thập Mỗi Phim: 100 Reviews
 -> Đã thu thập Reviews của 50 Phim trên web IMDb, gồm 5000 Reviews kèm Danh sách bên dưới
 
 
-### 🎬 Danh Sách Đầy Đủ 50 Phim Thu Thập Dữ Liệu
+#### 🎬 Danh Sách Đầy Đủ 50 Phim Thu Thập Dữ Liệu
 
 1. **12 Angry Men** (1957)
 2. **American History X** (1998)
