@@ -5,7 +5,7 @@
 
 
 ## 🎬 Số Reviews Thu Thập Mỗi Phim: 100 Reviews
-## -> Đã thu thập Reviews của 50 Phim trên web IMDb, gồm 5000 Reviews kèm Danh sách bên dưới
+-> Đã thu thập Reviews của 50 Phim trên web IMDb, gồm 5000 Reviews kèm Danh sách bên dưới
 
 
 ## 🎬 Danh Sách Đầy Đủ 50 Phim Thu Thập Dữ Liệu
